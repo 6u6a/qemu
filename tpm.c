@@ -19,6 +19,7 @@
 #include "sysemu/tpm.h"
 #include "qemu/config-file.h"
 #include "qmp-commands.h"
+#include "hw/tpm/tpm_int.h"
 
 static QLIST_HEAD(, TPMBackend) tpm_backends =
     QLIST_HEAD_INITIALIZER(tpm_backends);
@@ -59,6 +60,24 @@ static bool tpm_model_is_registered(enum TpmModel model)
         }
     }
     return false;
+}
+
+/*
+ * Write an error message in the given output buffer.
+ */
+uint32_t tpm_write_fatal_error_response(uint8_t *out, uint32_t out_len)
+{
+    if (out_len >= sizeof(struct tpm_resp_hdr)) {
+        struct tpm_resp_hdr *resp = (struct tpm_resp_hdr *)out;
+
+        resp->tag = cpu_to_be16(TPM_TAG_RSP_COMMAND);
+        resp->len = cpu_to_be32(sizeof(struct tpm_resp_hdr));
+        resp->errcode = cpu_to_be32(TPM_FAIL);
+
+        return sizeof(struct tpm_resp_hdr);
+    }
+
+    return 0;
 }
 
 const TPMDriverOps *tpm_get_backend_driver(const char *type)

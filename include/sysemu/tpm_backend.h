@@ -207,4 +207,6 @@ const TPMDriverOps *tpm_get_backend_driver(const char *type);
 int tpm_register_model(enum TpmModel model);
 int tpm_register_driver(const TPMDriverOps *tdo);
 
+uint32_t tpm_write_fatal_error_response(uint8_t *out, uint32_t out_len);
+
 #endif
