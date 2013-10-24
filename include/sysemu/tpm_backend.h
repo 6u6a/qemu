@@ -51,6 +51,7 @@ struct TPMBackend {
     enum TpmModel fe_model;
     char *path;
     char *cancel_path;
+    char *nvram_id;
     const TPMDriverOps *ops;
 
     QLIST_ENTRY(TPMBackend) list;

@@ -275,6 +275,7 @@ static TPMInfo *qmp_query_tpm_inst(TPMBackend *drv)
 {
     TPMInfo *res = g_new0(TPMInfo, 1);
     TPMPassthroughOptions *tpo;
+    TPMLibtpmsOptions *tlo;
 
     res->id = g_strdup(drv->id);
     res->model = drv->fe_model;
@@ -293,6 +294,12 @@ static TPMInfo *qmp_query_tpm_inst(TPMBackend *drv)
             tpo->cancel_path = g_strdup(drv->cancel_path);
             tpo->has_cancel_path = true;
         }
+        break;
+     case TPM_TYPE_LIBTPMS:
+        res->options->kind = TPM_TYPE_OPTIONS_KIND_LIBTPMS;
+        tlo = g_new0(TPMLibtpmsOptions, 1);
+        res->options->libtpms = tlo;
+        tlo->nvram = g_strdup(drv->nvram_id);
         break;
     case TPM_TYPE_MAX:
         break;
